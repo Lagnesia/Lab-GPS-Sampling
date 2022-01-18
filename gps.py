@@ -1,6 +1,7 @@
 from msilib.schema import Error
 import numpy as np
 from numpy.lib.function_base import gradient
+import math
 
 class Location(): #금지 구역 설정
 
@@ -9,7 +10,7 @@ class Location(): #금지 구역 설정
         self.location_coord = []
         self.IllegalArea = None
 
-    def isLocation(self, coord):
+    def isLocation(self, coord, verbose=1):
         x = coord[1]
         y = coord[0]
         if self.location != []:
@@ -20,7 +21,11 @@ class Location(): #금지 구역 설정
                 bias = equation[2]
                 equation = str(y)+str(boundary)+str(gradient)+'*'+str(x)+'+'+str(bias)
                 equation2 = 'y'+str(boundary)+str(gradient)+'*'+'x'+'+'+str(bias)
-                print(eval(equation), equation2)
+                equation3= str(gradient)+'*'+str(x)+'+'+str(bias)
+                if verbose:
+                    print(eval(equation),' '*6,  equation2)
+                    if verbose == 2:
+                        print(f'Target: {y} Calcualted: {eval(equation3)}')
                 if(not eval(equation)): pass
                # else: return True
         else:
@@ -49,7 +54,7 @@ class Path: #웨이포인트 설정
         else:
             raise ValueError('Not allowed point')
     
-    def create_path(cls, cnt, start_point=(37.5812,124.43)):
+    def create_path(cls, cnt, start_point=(37.5812,124.4310)):
         path = Path()
         for i in range(cnt):
             if i == 0: loc = start_point
@@ -62,6 +67,7 @@ class GPSController:
     def __init__(self, file=None) -> None:
         self.gps_file = file
         self.location = Location()
+        self.center = 37.9593, 124.6653
 
     def read(self, path='GPS.txt'):
         """
@@ -74,7 +80,7 @@ class GPSController:
         for line in f.readlines():
             gps_coord = line.split(',')
             for i, coord in enumerate(gps_coord): #공백제거
-                gps_coord[i] = float(coord.strip())
+                gps_coord[i] = round(float(coord.strip()), 4) 
             self.location.location_coord.append(gps_coord)
 
         return True
@@ -119,7 +125,8 @@ def main():
     
     location = GPSControl.location
 
-    co_BaekRyeongDo = {"lat":37.5812,"lng":124.43}
+    #co_BaekRyeongDo = {"lat":37.5812,"lng":124.4310}
+    co_BaekRyeongDo = {"lat":37.9518,"lng":124.6757}
     lat = co_BaekRyeongDo['lat']
     lng = co_BaekRyeongDo['lng']
 
