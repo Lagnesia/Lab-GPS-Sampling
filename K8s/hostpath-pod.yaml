@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: pod
+metadata:
+  name: hostpath-pod
+spec:
+  containers:
+    - name: m-container
+      image: busybox
+      args: ["tail","-f","/dev/null"]
+      volumeMounts:
+     - name: m-hostpath-volume
+      mountPath: /etc/data
+  volumes:
+    - name: m-hostpath-volume
+      hostPath:
+        path: /tmp
